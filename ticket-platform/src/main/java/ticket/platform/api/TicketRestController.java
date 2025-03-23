@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import ticket.platform.domain.dto.TicketDto;
 import ticket.platform.domain.enums.TicketStatus;
+import ticket.platform.service.CategoryService;
 import ticket.platform.service.TicketService;
 
 @RestController
@@ -19,19 +20,21 @@ import ticket.platform.service.TicketService;
 public class TicketRestController {
     private final TicketService ticketService;
 
-    public TicketRestController(TicketService ticketService) {
+
+    public TicketRestController(TicketService ticketService, CategoryService categoryService) {
         this.ticketService = ticketService;
+       
     }
 
 
     @GetMapping
-    public ResponseEntity<List<TicketDto>> getAll(){
+    public ResponseEntity<List<TicketDto>> getAllticket(){
         return ResponseEntity.ok(ticketService.getAll());
     }
-
+   
     @GetMapping(value = "/all-by-category")
-    public ResponseEntity<List<TicketDto>> getAllByCategory(@RequestParam String category){
-        return ResponseEntity.ok(ticketService.getAllByCategory(category));
+    public ResponseEntity<List<TicketDto>> getAllByCategory(@RequestParam Integer categoryId){
+        return ResponseEntity.ok(ticketService.getAllByCategoryId(categoryId));
     }
 
     @GetMapping(value = "/all-by-status")

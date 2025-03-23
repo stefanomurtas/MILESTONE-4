@@ -18,6 +18,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import jakarta.validation.Valid;
 import ticket.platform.domain.entity.Ticket;
 import ticket.platform.domain.enums.TicketStatus;
+import ticket.platform.service.impl.CategoryServiceImpl;
 import ticket.platform.service.impl.TicketServiceImpl;
 
 @Controller
@@ -26,6 +27,8 @@ public class TicketController {
 
     @Autowired
     private TicketServiceImpl ticketServiceImpl;
+    @Autowired
+    private CategoryServiceImpl categoryServiceImpl;
 
     @GetMapping
     public String index(Model model) {
@@ -67,58 +70,66 @@ public class TicketController {
 
     @GetMapping("/create")
     public String showCreateForm(Model model) {
-        Ticket ticket = new Ticket(); 
-        ticket.setState(TicketStatus.TO_DO);  // Imposta uno stato di default, se desiderato
+        Ticket ticket = new Ticket();
+        ticket.setStatus(TicketStatus.TO_DO);  //  stato di default
         model.addAttribute("ticket", ticket);
         model.addAttribute("ticketStatuses", TicketStatus.values());
         return "ticket/create";
     }
- @PostMapping("/create")
- public String create(@Valid @ModelAttribute("ticket")Ticket formTicket,BindingResult bindingResult ,Model model, RedirectAttributes redirectAttributes){
-    if (bindingResult.hasErrors()) {
-      model.addAttribute("create", true);
-      model.addAttribute("ticketStatuses", TicketStatus.values());
-        return "ticket/create";
+
+    @PostMapping("/create")
+    public String create(@Valid @ModelAttribute("ticket") Ticket formTicket, BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("create", true);
+            model.addAttribute("ticketStatuses", TicketStatus.values());
+            model.addAttribute("Categories",categoryServiceImpl.findAll());
+            return "ticket/create";
+        }
+        ticketServiceImpl.createOrUpdate(formTicket);
+        redirectAttributes.addFlashAttribute("message", String.format("\"%s\" è stato salvato correttamente", formTicket.getTitle()));
+        redirectAttributes.addFlashAttribute("messageClass", ("alert-danger"));
+        return "redirect:/ticket";
     }
-    ticketServiceImpl.createOrUpdate(formTicket);
-    redirectAttributes.addFlashAttribute("message", String.format("\"%s\" è stato salvato correttamente",formTicket.getTitle()));
-redirectAttributes.addFlashAttribute("messageClass", ("alert-danger"));
-    return "redirect:/ticket";
- }
- @GetMapping ("/edit/{id}")
- public String create (@PathVariable("id") Integer id,Model model){
-    model.addAttribute("ticket", ticketServiceImpl.getById(id));
-    return "ticket/edit";
-}
-@PostMapping("/edit/{id}")
- public String edit(@Valid @ModelAttribute("ticket")Ticket formTicket,BindingResult bindingResult ,Model model, RedirectAttributes redirectAttributes){
-    if (bindingResult.hasErrors()) {
 
+    @GetMapping("/edit/{id}")
+    public String create(@PathVariable("id") Integer id, Model model) {
+        model.addAttribute("ticket", ticketServiceImpl.getById(id));
         return "ticket/edit";
-}
-ticketServiceImpl.createOrUpdate(formTicket);
-redirectAttributes.addFlashAttribute("message", String.format("\"%s\" è stato salvato correttamente",formTicket.getTitle()));
-redirectAttributes.addFlashAttribute("messageClass", ("alert-success"));
-return "redirect:/ticket";
+    }
 
- }
- @PostMapping("/delete/{id}")
- public String delete(@PathVariable Integer id , RedirectAttributes redirectAttributes){
-   Ticket ticket = ticketServiceImpl.getById(id);
-    ticketServiceImpl.delete(ticket);
-redirectAttributes.addFlashAttribute("message", String.format("\"%s\" è stato cancellato correttamente",ticket.getTitle()));
-redirectAttributes.addFlashAttribute("messageClass", ("alert-danger"));
-    return "redirect:/ticket";
- }
+    @PostMapping("/edit/{id}")
+    public String edit(@Valid @ModelAttribute("ticket") Ticket formTicket, BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("create", true);
+            model.addAttribute("ticketStatuses", TicketStatus.values());
+            model.addAttribute("Categories",categoryServiceImpl.findAll());
+            return "ticket/edit";
+        }
+        ticketServiceImpl.createOrUpdate(formTicket);
+        redirectAttributes.addFlashAttribute("message", String.format("\"%s\" è stato salvato correttamente", formTicket.getTitle()));
+        redirectAttributes.addFlashAttribute("messageClass", ("alert-danger"));
+        return "redirect:/ticket";
+    }
 
+    
+
+    @PostMapping("/delete/{id}")
+    public String delete(@PathVariable Integer id, RedirectAttributes redirectAttributes) {
+        Ticket ticket = ticketServiceImpl.getById(id);
+        ticketServiceImpl.delete(ticket);
+        redirectAttributes.addFlashAttribute("message", String.format("\"%s\" è stato cancellato correttamente", ticket.getTitle()));
+        redirectAttributes.addFlashAttribute("messageClass", ("alert-danger"));
+        return "redirect:/ticket";
+    }
 
 
     @GetMapping("/ticket/edit/{id}")
     public String showEditForm(@PathVariable("id") Integer id, Model model) {
         Optional<Ticket> optionalTicket = ticketServiceImpl.findById(id);
         if (optionalTicket.isPresent()) {
-            model.addAttribute("ticket", optionalTicket.get());}
-            model.addAttribute("ticketStatus", TicketStatus.values());
+            model.addAttribute("ticket", optionalTicket.get());
+        }
+        model.addAttribute("ticketStatus", TicketStatus.values());
         return "ticket/edit";
     }
 }

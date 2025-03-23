@@ -8,7 +8,7 @@ import ticket.platform.domain.enums.TicketStatus;
 public interface TicketService {
 
     List<TicketDto> getAll();
-    List<TicketDto> getAllByCategory(String category);
+    List<TicketDto> getAllByCategoryId(Integer categoryId);
     List<TicketDto> getAllByStatus(TicketStatus ticketStatus);
     
 }

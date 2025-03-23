@@ -9,8 +9,8 @@ import ticket.platform.domain.enums.TicketStatus;
 
 public interface  TicketRepository extends JpaRepository<Ticket, Integer>{
     // public List<Ticket> findAll();
-    public List<Ticket> findAllByCategory(String category);
-    public List<Ticket> findAllByState(TicketStatus ticketState);
+    public List<Ticket> findAllByCategoryId(Integer categoryId);
+    public List<Ticket> findAllByStatus(TicketStatus ticketStatus);
     public List<Ticket> findByTitleContaining(String title);
     public List<Ticket> findByDetailsContaining(String details);
     public List<Ticket> findByTitleContainingAndDetailsContaining(String title, String details);

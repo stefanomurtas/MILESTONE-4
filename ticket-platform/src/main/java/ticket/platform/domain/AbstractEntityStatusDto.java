@@ -1,19 +1,25 @@
 package ticket.platform.domain;
+
 import java.time.LocalDateTime;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
-
+import jakarta.validation.constraints.PastOrPresent;
 
 
 @MappedSuperclass
-public abstract  class  AbstractEntityStatus{
-    @Column(name="created_at", nullable = false)
+public class AbstractEntityStatusDto {
+    @PastOrPresent(message="non può essere creata in futuro")
     private LocalDateTime createdAt;
 
-    @Column(name="updated_at", nullable = false)
+    @PastOrPresent(message="non può essere creata in futuro")
     private LocalDateTime updatedAt;
 
+    public  AbstractEntityStatusDto(){}
+
+    public AbstractEntityStatusDto(LocalDateTime createdAt, LocalDateTime updatedAt) {
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+    }
 
     public LocalDateTime getCreatedAt() {
         return this.createdAt;

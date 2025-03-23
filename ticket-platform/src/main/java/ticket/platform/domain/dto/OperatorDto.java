@@ -1,33 +1,39 @@
-package ticket.platform.domain.entity;
+package ticket.platform.domain.dto;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import jakarta.validation.constraints.Email;
-import ticket.platform.domain.AbstractEntityStatus;
+import java.io.Serial;
+import java.io.Serializable;
+import java.time.LocalDateTime;
+
+import ticket.platform.domain.AbstractEntityStatusDto;
 
 
+public class OperatorDto extends AbstractEntityStatusDto implements Serializable {
 
-@Entity
-@Table(name = "operators")
-public class Operator extends AbstractEntityStatus {
+    @Serial
+    private static final long serialVersionUID = 1L;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+
     private Integer id;
-    @Email
-    @Column(name = "email", unique = true, nullable = false)
+
+
     private String email;
-    @Column(name = "username", unique = true, nullable = false)
+
     private String username;
-    @Column(name = "password", nullable = false)
+
     private String password;
-    @Column(name = "active",nullable = false)
+
     private Boolean active;
+
+    public OperatorDto(){}
+
+    public OperatorDto(Integer id,String email,  String username, String password, Boolean active,LocalDateTime createdAt, LocalDateTime updatedAt) {
+        super(createdAt, updatedAt);
+        this.id = id;
+        this.email = email;
+        this.username = username;
+        this.password = password;
+        this.active = active;
+    }
 
     public Integer getId() {
         return id;

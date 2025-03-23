@@ -27,8 +27,8 @@ public class Ticket extends AbstractEntityStatus {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     @Enumerated(EnumType.STRING)
-    @Column(name = "state", nullable = false)
-    private TicketStatus state;
+    @Column(name = "status", nullable = false)
+    private TicketStatus status;
     @Column(name = "title", nullable = false)
     private String title;
     @Column(name = "details")
@@ -50,12 +50,12 @@ public class Ticket extends AbstractEntityStatus {
         this.id = id;
     }
 
-    public TicketStatus getState() {
-        return state;
+    public TicketStatus getStatus() {
+        return status;
     }
 
-    public void setState(TicketStatus state) {
-        this.state = state;
+    public void setStatus(TicketStatus status) {
+        this.status = status;
     }
 
     public String getTitle() {
